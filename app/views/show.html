@@ -1,0 +1,49 @@
+<html>
+<head>
+	<title>Messages</title>
+</head>
+<body>
+	<div class='header'>
+		<h1> Test App</h1>
+		<h2><a href="/users/dashboard">Dashboard</a></h2>
+		<h2><a href="/users/edit/{{ session['id'] }}"> Profile </a> </h2>
+		<h2><a href='/users/logoff'> Log Off </a> </h2>
+	</div>
+	<div class='user'>
+		<h1>{{ user['firstname'] }} {{user['lastname'] }}</h1>
+		<table>
+			<tr><td>Registered at:</td><td>{{ user['created_at']}}</td></tr>
+			<tr><td> User ID:</td><td> {{ user['id'] }}</td></tr>
+			<tr><td> Email Address: </td><td> {{ user['email'] }}</td></tr>
+			<tr><td>Description</td><td>{{ user['description'] }}</td></tr>
+		</table>
+	</div>
+	<div class='messages'>
+	<h1> Leave a message for {{ user['firstname'] }}</h1>
+	<form action="/users/message" method="POST">
+		<input type="textbox" name="message">
+		<input type="hidden" name="touser_id" value="{{ user['id'] }}">
+		<input type="hidden" name="user_id" value="{{ session['id']}}">
+		<input type="submit" value="Post">
+	</form>
+	{% for message in messages %}
+	<div class="message">
+		<h4><a href="/users/show/{{ message['message_user_id'] }}"> {{ message['firstname'] }} {{ message['lastname'] }}</a> wrote:</h4>
+		<h4 > at {{message['created_at']}}</h4>
+		<p> {{ message['message'] }} </p>
+		{% for comment in comments %}
+		{% if message['message_id'] == comment['match_id'] %}
+		<h4><a href="/users/show/{{ comment['message_user_id'] }}"> {{ comment['firstname'] }} {{ comment['lastname'] }}</a> wrote:</h4>
+		<h4 > at {{comment['created_at']}}</h4>
+		<p> {{ comment['message'] }} </p>
+		{% endif %}
+		{% endfor %}
+		<form action="/users/comment" method="POST">
+		<input type="textbox" name="message" placeholder="write a comment">
+		<input type="hidden" name="touser_id" value="{{ user['id'] }}">
+		<input type="hidden" name="user_id" value="{{ session['id']}}">
+		<input type="hidden" name="message_id" value="{{ message['message_id']}}">
+		<input type="submit" value="Post">
+		{% endfor %}
+	</body>
+	</html>

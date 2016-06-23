@@ -1,0 +1,55 @@
+<html>
+<head>
+	<title>Dashboard</title>
+</head>
+<body>
+	<div class='header'>
+		<h1> Test App</h1>
+		<h2><a href="/users/dashboard">Dashboard</a></h2>
+		<h2><a href="/users/edit/{{ session['id'] }}"> Profile </a> </h2>
+		<h2><a href='/users/logoff'> Log Off </a> </h2>
+	</div>
+	<div class='dash'>
+		{% if session['user_level'] == 'admin': %} 
+		<h1>Manage Users</h1>
+		<button><a href='/users/register'> Add new </a> </button>
+		{% else: %}
+		<h1>All Users</h1>
+		{% endif %}
+		<table>
+			<thead>
+				<tr>
+					<td>ID</td>
+					<td>Name</td>
+					<td>email</td>
+					<td>created_at</td>
+					<td>user_level</td>
+					{% if session['user_level'] == 'admin': %} 
+					<td>actions</td>
+					{% endif %}
+				</tr>
+			</thead>
+			<tbody>
+				{% for user in all_users: %}
+				<tr>
+					<td> {{ user['id'] }}</td>
+					<td> <a href="/users/show/{{ user['id'] }}"> {{ user['firstname']}} {{ user['lastname']}} </a> </td>
+					<td> {{ user['email']}}</td>
+					<td> {{ user['created_at']}}</td>
+					<td> {{user['user_level']}}</td>
+					{% if session['user_level'] == 'admin': %}
+					<td> 
+						<button><a href="/users/edit/{{ user['id'] }}">edit</a></button> 
+						<form action="/users/delete" method="post" onsubmit="return confirm('Deleting User!');">
+						<input type="hidden" name="user_id" value="{{ user['id'] }}">
+							<button type="submit">Delete</button>
+						</form>
+					</td>
+					{% endif %}
+				</tr>
+				{% endfor %}
+		</tbody>
+	</table>
+
+</body>
+</html>

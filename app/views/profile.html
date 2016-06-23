@@ -1,0 +1,73 @@
+<html>
+<head>
+	<title>Profile Editor</title>
+</head>
+<body>
+	<div class='header'>
+		<h1> Test App</h1>
+		<h2><a href="/users/dashboard">Dashboard</a></h2>
+		<h2><a href="/users/edit/{{ session['id'] }}"> Profile </a> </h2>
+		<h2><a href='/users/logoff'> Log Off </a> </h2>
+	</div>
+	<div class='errors'>
+		{% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+		<ul class=flashes>
+			{% for category, message in messages %}
+			<li class="{{ category }}">{{ message }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+	</div>
+	<div class="editor">
+		{% if session['user_level'] == 'admin' %}
+		<h1> Edit User # {{ user['id'] }}</h1>
+		<button><a href="/users/dashboard">Return to Dashboard</a></button>
+		{% else %}
+		<h1> Edit Profile </h1>
+		{% endif %}
+		<div class="info">
+			<h3> Edit Information </h3>
+			<form action="/users/infoupdate" method="POST">
+				<h4> Email Address: </h4>
+				<input type="text" name="email" value="{{ user['email'] }}">
+				<h4>First Name:</h4>
+				<input type="text" name="firstname" value="{{ user['firstname'] }}">
+				<h4>Last Name:</h4>
+				<input type="text" name="lastname" value="{{ user['lastname'] }}">
+				<input type="hidden" name="id" value="{{ user['id'] }}">
+				{% if session['user_level'] == 'admin' %}
+				<h4>User Level:</h4>
+				<select name="user_level" value="{{ user['user_level'] }}">
+					<option>normal</option>
+					<option>admin</option>
+				</select>
+				{% endif %}
+				<input type="submit" value="Save">
+			</form>
+		</div>
+		<div class="password">
+			<h3> Change Password </h3>
+			<form action="/users/passwordupdate" method="POST">
+				<h4> Password</h4>
+				<input type="password" name="password">
+				<h4> Password Confirmation </h4>
+				<input type="password" name="confirmation">
+				<input type="hidden" name="id" value="{{ user['id'] }}">
+				<input type="submit" value="Update Password">
+
+			</form>
+		</div>
+		{% if session['id'] == user['id'] %}
+		<div class="description">
+			<h2>Description</h2>
+			<form action="/users/descriptionupdate" method="POST">
+				<input type="text" name="description" width="400px" height="60px" value="{{ user['description'] }}">
+				<input type="hidden" name="id" value="{{ user['id'] }}">
+				<input type="submit" value="Update Description">
+				{% endif %}
+
+
+			</body>
+			</html>

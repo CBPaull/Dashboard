@@ -1,0 +1,61 @@
+<html>
+<head>
+	<title>Register</title>
+</head>
+<body>
+	<div class='header'>
+		<h1> Test App</h1>
+		{% if session['user_level'] == 'admin' %}
+		<h2><a href='/users/dashboard'>Dashboard</a></h2>
+		<h2><a href="/users/edit/{{ session['id'] }}"> Profile </a> </h2>
+		<h2><a href='/users/logoff'> Log Off </a> </h2>
+		{% else %}
+		<h2><a href='/'>Home</a></h2>
+		<h2><a href='/users/signin'> Sign In </a> </h2>
+		{% endif %}
+	</div>
+	<div class='errors'>
+		{% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+		<ul class=flashes>
+			{% for category, message in messages %}
+			<li class="{{ category }}">{{ message }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+	</div>
+	<div class='register'>
+		{% if session['user_level'] == 'admin' %}
+		<h1> Add a new user</h1>
+		<button><a href="/users/dashboard">Return to Dashboard</a></button>
+		{% else: %}
+		<h1> Register </h1>
+		{% endif %}
+		<form action="/users/add" method="POST">
+			<h3> First Name:</h3>
+			<input type="text" name="firstname">
+			<h3> Last Name:</h3>
+			<input type="text" name="lastname">
+			<h3> Email Address:</h3>
+			<input type="text" name="email">
+			<h3>Password:</h3>
+			<input type="password" name="password">
+			<h3>  Password Confirmation:</h3>
+			<input type="password" name="confirmation">
+			<input type="hidden" name="user_level" value="normal">
+			{% if session['user_level'] == 'admin' %}	
+			<input type="submit" value="Create">
+			{% else %}
+			<input type="submit" value="Register">
+			{% endif %}
+
+		</form>
+		{% if session['user_level'] == 'admin' %}
+		<p>Admin</p> 
+		{% else %}
+		<p><a href="/users/signin">Already have an account, sign in.</a></p>
+		{% endif %}
+	</div>
+</body>
+</html>
